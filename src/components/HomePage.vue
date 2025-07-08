@@ -19,6 +19,7 @@
         </div>
       </div>
       <div v-else><p>No notes saved yet.</p></div>
+      
       <div class="note-card" @click="navigateTo('notes')">
         <button class="note-button">Add a Note</button>
       </div>

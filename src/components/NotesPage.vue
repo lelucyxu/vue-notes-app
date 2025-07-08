@@ -13,6 +13,16 @@
             placeholder="Write your note here..."
         ></textarea>  
         <button class="save-note" @click="saveNote">Save Note</button>
+
+        <div class="upload-note">
+            <h2>Import a Note</h2>
+            <input type="file" @change="handleFileUpload" accept="image/*,audio/*,video/*" />
+            <div v-if="fileUrl" class="preview">
+              <img v-if="mediaType === 'image'" :src="fileUrl" alt="Image preview" />
+              <img v-if="mediaType === 'audio'" :src="fileUrl" controls />
+              <img v-if="mediaType === 'video'" :src="fileUrl" controls />
+            </div>
+        </div>
     </div>
   </div>
 </template>
@@ -25,6 +35,9 @@ export default {
   name: 'NotesPage',
   setup() {
     const router = useRouter()
+    const note = ref('')
+    const fileUrl = ref(null)
+    const mediaType = ref('')
     
     const goBack = () => {
       return router.push({ name: 'home' });
@@ -33,9 +46,6 @@ export default {
     const navigateTo = (mode) => {
       router.push({ name: mode })
     }
-    
-    const note = ref('')
-
 
     function saveNote() {
       const trimmed = note.value.trim()
@@ -46,11 +56,38 @@ export default {
       note.value = ''
     }
 
+    function handleFileUpload(event) {
+      const file = event.target.files[0]
+      if (!file) return
+      const url = URL.createObjectURL(file)
+
+      if (file.type.startsWith('image')) {
+        mediaType.value = 'image'
+      }
+      else if (file.type.startsWith('audio')) {
+        mediaType.value = 'audio'
+      }
+      else if (file.type.startsWith('video')) {
+        mediaType.value = 'video'
+      }
+      else {
+        mediaType.value = ''
+        alert('Unsupported file type.')
+        return
+      }
+      fileUrl.value = url
+    }
+    
+
+
     return {
       navigateTo,
       goBack,
       note,
-      saveNote
+      saveNote,
+      fileUrl,
+      mediaType, 
+      handleFileUpload
     }
   }
 }
@@ -125,5 +162,20 @@ export default {
 .save-note:hover {
   background-color:#2c6b8a;
 }
+
+.upload-note {
+  margin-top: 24px;
+}
+
+.preview {
+  margin-top: 16px;
+}
+
+img, video {
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
 
 </style> 
