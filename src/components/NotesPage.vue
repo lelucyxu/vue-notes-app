@@ -9,7 +9,7 @@
         <textarea 
             class="note-input" 
             v-model="note"
-            rows="5"
+            rows="7"
             placeholder="Write your note here..."
         ></textarea>  
         <button class="save-note" @click="saveNote">Save Note</button>
@@ -100,10 +100,11 @@ export default {
 
 .note-input {
   width: 100%;
+  max-width: 700px;
   padding: 8px; 
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
   font-family: inherit;
   font-size: 16px; 
   resize: vertical;
@@ -111,7 +112,7 @@ export default {
 }
 
 .save-note {
-  background-color: #3b82f6;
+  background-color: #3986A8;
   color: white;
   padding: 8px 16px; 
   border: none;
@@ -122,7 +123,7 @@ export default {
 }
 
 .save-note:hover {
-  background-color: #2563eb;
+  background-color:#2c6b8a;
 }
 
 </style> 

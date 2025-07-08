@@ -126,7 +126,8 @@ export default {
 }
 
 .notes-list {
-  margin-top: 16px;
+  margin-top: 15px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   gap: 16px; 
@@ -149,6 +150,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 200px;
+  width: 100%;
+  max-height: 200px;
 }
 
 .menu-wrapper {
