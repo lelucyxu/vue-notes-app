@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import HomePage from './components/HomePage.vue'
 import NotesPage from './components/NotesPage.vue'
+import LoginPage from './components/LoginPage.vue'
 
 // Create router instance
 const router = createRouter({
@@ -10,6 +11,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'login',
+      component: LoginPage
+    },
+    {
+      path: '/home',
       name: 'home',
       component: HomePage
     },
