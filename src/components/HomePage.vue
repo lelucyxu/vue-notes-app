@@ -8,18 +8,33 @@
       <div v-if="notes.length > 0" class="notes-list">
         <h2>Saved Notes</h2>
         <div v-for="(n, index) in notes" :key="index" class="note-display">
-          {{ n }}
+          <div v-html="n"></div>
           <div class="menu-wrapper">
             <button @click="toggleMenu(index)" class="dots-btn">⋮</button>
             <div v-if="menuOpenIndex === index" class="menu-dropdown">
-              <button @click="confirmDelete(index)">Delete</button>
+              <button @click="confirmDeleteNotes(index)">Delete</button>
               <!--<button @click="editNote(index, n)">Edit</button>  could possibly edit the notes and go to the note page?--> 
             </div>
           </div>
         </div>
       </div>
       <div v-else><p>No notes saved yet.</p></div>
-      
+
+      <div v-if="files.length > 0 " class="files-list">
+        <h2>Saved Files</h2> 
+        <div v-for="(n, index) in files" :key="index" class="file-display">
+          {{ n }}
+          <div class="menu-wrapper">
+            <button @click="toggleMenu(index)" class="dots-btn">⋮</button>
+            <div v-if="menuOpenIndex === index" class="menu-dropdown">
+              <button @click="confirmDeleteFiles(index)">Delete</button>
+              <!--<button @click="editNote(index, n)">Edit</button>  could possibly edit the notes and go to the note page?--> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else><p>No files saved yet.</p></div>
+        
       <div class="note-card" @click="navigateTo('notes')">
         <button class="note-button">Add a Note</button>
       </div>
@@ -41,12 +56,18 @@ export default {
     }
 
     const notes = ref([])
+    const files = ref([])
     const menuOpenIndex = ref(null)
 
     onMounted(() => {
-      const saved = JSON.parse(localStorage.getItem('my-notes'))
-      if (saved) {
-        notes.value = saved
+      const nSaved = JSON.parse(localStorage.getItem('my-notes'))
+      if (nSaved) {
+        notes.value = nSaved
+      }
+
+      const fSaved = JSON.parse(localStorage.getItem('media-files'))
+      if (fSaved) {
+        files.value = fSaved
       }
     })
 
@@ -54,10 +75,18 @@ export default {
       menuOpenIndex.value = menuOpenIndex.value === index ? null : index
     }
 
-    function confirmDelete(index) {
+    function confirmDeleteNotes(index) {
       if (confirm('Delete this note?')) {
         notes.value.splice(index, 1)
         localStorage.setItem('my-notes', JSON.stringify(notes.value))
+        menuOpenIndex.value = null
+      }
+    }
+
+    function confirmDeleteFiles(index) {
+      if (confirm('Delete this file?')) {
+        files.value.splice(index, 1)
+        localStorage.setItem('media-files', JSON.stringify(files.value))
         menuOpenIndex.value = null
       }
     }
@@ -65,9 +94,11 @@ export default {
     return {
       navigateTo,
       notes,
+      files,
       menuOpenIndex,
       toggleMenu,
-      confirmDelete
+      confirmDeleteNotes,
+      confirmDeleteFiles
     }
   }
 }
@@ -155,6 +186,19 @@ export default {
   width: 100%;
   max-height: 200px;
 }
+
+.files-list {
+  margin-top: 15px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
+}
+
+.file-display {
+  margin-bottom: 12px;
+}
+
 
 .menu-wrapper {
   position: relative;

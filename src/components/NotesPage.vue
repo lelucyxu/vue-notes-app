@@ -2,26 +2,28 @@
   <div class="notes-container">
     <div class="top-bar">
         <button class="back-button" @click="goBack">← Back to Home Page</button>
-        <h1 class="heading">Notes</h1>
+        <h1 class="heading">BGC Notes Tool</h1>
     </div>
 
     <div class="main-content">
-        <textarea 
-            class="note-input" 
-            v-model="note"
-            rows="7"
-            placeholder="Write your note here..."
-        ></textarea>  
+        <QuillEditor
+            v-model:content="note"
+            content-type="html"
+            theme="snow"
+            class="note-input"
+        />
+
         <button class="save-note" @click="saveNote">Save Note</button>
 
         <div class="upload-note">
-            <h2>Import a Note</h2>
+            <h3>Import a Note</h3>
             <input type="file" @change="handleFileUpload" accept="image/*,audio/*,video/*" />
             <div v-if="fileUrl" class="preview">
               <img v-if="mediaType === 'image'" :src="fileUrl" alt="Image preview" />
               <img v-if="mediaType === 'audio'" :src="fileUrl" controls />
               <img v-if="mediaType === 'video'" :src="fileUrl" controls />
             </div>
+            <button class="save-note" @click="saveFile">Save File</button>
         </div>
     </div>
   </div>
@@ -30,9 +32,12 @@
 <script>
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 export default {
   name: 'NotesPage',
+  components: { QuillEditor },
   setup() {
     const router = useRouter()
     const note = ref('')
@@ -48,12 +53,12 @@ export default {
     }
 
     function saveNote() {
-      const trimmed = note.value.trim()
-      if (!trimmed) return
-      const savedNotes = JSON.parse(localStorage.getItem('my-notes')) || []
-      savedNotes.push(trimmed)
-      localStorage.setItem('my-notes', JSON.stringify(savedNotes))
-      note.value = ''
+      if (note.value.trim()) {
+        const saved = JSON.parse(localStorage.getItem('my-notes') || '[]')
+        saved.push(note.value)
+        localStorage.setItem('my-notes', JSON.stringify(saved))
+        note.value = ''
+      }
     }
 
     function handleFileUpload(event) {
@@ -77,9 +82,20 @@ export default {
       }
       fileUrl.value = url
     }
+
+    function saveFile() {
+        if (!fileUrl.value) return
+        const savedMedia = JSON.parse(localStorage.getItem('media-files') || '[]')
+        savedMedia.push({
+          url: fileUrl.value,
+          type: mediaType.value,
+        })
+        localStorage.setItem('media-files', JSON.stringify(savedMedia))
+        URL.revokeObjectURL(fileUrl.value)
+        fileUrl.value = null
+        mediaType.value = ''
+    }
     
-
-
     return {
       navigateTo,
       goBack,
@@ -87,7 +103,8 @@ export default {
       saveNote,
       fileUrl,
       mediaType, 
-      handleFileUpload
+      handleFileUpload,
+      saveFile
     }
   }
 }
@@ -176,6 +193,4 @@ img, video {
   border: 1px solid #ccc;
   border-radius: 8px;
 }
-
-
 </style> 
